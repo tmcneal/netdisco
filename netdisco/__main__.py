@@ -2,12 +2,13 @@
 from __future__ import print_function
 import sys
 
-from netdisco.discovery import NetworkDiscovery
+from discovery import NetworkDiscovery
 
 
 def main():
     """Handle command line execution."""
     netdisco = NetworkDiscovery()
+    print(netdisco)
 
     netdisco.scan()
 

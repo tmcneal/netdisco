@@ -11,6 +11,7 @@ from .gdm import GDM
 from .lms import LMS
 from .tellstick import Tellstick
 from .daikin import Daikin
+from .bluetooth import Bluetooth
 # from .samsungac import SamsungAC
 
 _LOGGER = logging.getLogger(__name__)
@@ -24,6 +25,7 @@ class NetworkDiscovery(object):
     GDM scans in the foreground.
     LMS scans in the foreground.
     Tellstick scans in the foreground
+    Bluetooth scans in a background thread.
 
     start: is ready to scan
     scan: scan the network
@@ -44,6 +46,7 @@ class NetworkDiscovery(object):
         self.daikin = Daikin()
         # self.samsungac = SamsungAC()
         self.discoverables = {}
+        self.bluetooth = Bluetooth()
 
         self._load_device_support()
 
@@ -71,6 +74,9 @@ class NetworkDiscovery(object):
         daikin_thread = threading.Thread(target=self.daikin.scan)
         daikin_thread.start()
 
+        bluetooth_thread = threading.Thread(target=self.bluetooth.scan)
+        bluetooth_thread.start()
+
         # self.samsungac.scan()
 
         # Wait for all discovery processes to complete
@@ -79,6 +85,7 @@ class NetworkDiscovery(object):
         lms_thread.join()
         tellstick_thread.join()
         daikin_thread.join()
+        bluetooth_thread.join()
 
     def stop(self):
         """Turn discovery off."""
@@ -149,3 +156,6 @@ class NetworkDiscovery(object):
         print("")
         print("Tellstick")
         pprint(self.tellstick.entries)
+        print("")
+        print("Bluetooth")
+        pprint(self.bluetooth.entries)
